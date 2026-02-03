@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Valentinstag 💘</title>
+  <meta name="theme-color" content="#ff4d6d" />
+  <style>
+    :root{
+      --bgA:#fff1f3;
+      --bgB:#ffe4e6;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --card:rgba(255,255,255,.78);
+      --stroke:rgba(255,255,255,.55);
+      --shadow: 0 22px 70px rgba(17,24,39,.16);
+      --yes:#16a34a;
+      --no:#ef4444;
+      --pink:#ff4d6d;
+      --pink2:#ff8fab;
+      --radius:24px;
+    }
+
+    *{ box-sizing:border-box; }
+
+    html,body{ height:100%; }
+
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family: ui-rounded, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 800px at 18% 12%, rgba(255,77,109,.18), transparent 60%),
+        radial-gradient(1200px 800px at 78% 72%, rgba(255,143,171,.22), transparent 55%),
+        linear-gradient(135deg, var(--bgA), var(--bgB));
+      overflow:hidden;
+    }
+
+    /* Subtile „Noise“ Optik */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+      mix-blend-mode: soft-light;
+      opacity:.35;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:grid;
+      place-items:center;
+      padding:28px 16px;
+    }
+
+    .card{
+      width:min(760px, 94vw);
+      border-radius: var(--radius);
+      background: var(--card);
+      border:1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 20px;
+      border-bottom:1px solid rgba(255,255,255,.55);
+      background: linear-gradient(90deg, rgba(255,77,109,.12), rgba(255,143,171,.10));
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(255,255,255,.65);
+      border:1px solid rgba(255,255,255,.65);
+      font-weight:700;
+      letter-spacing:.2px;
+      font-size:13px;
+      color:#111827;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #fff, var(--pink));
+      box-shadow: 0 0 0 6px rgba(255,77,109,.12);
+    }
+
+    .content{
+      padding:26px 22px 22px;
+      position:relative;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size: clamp(30px, 4.6vw, 48px);
+      line-height:1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .lead{
+      margin:0 0 18px;
+      font-size: clamp(16px, 2vw, 19px);
+      line-height:1.5;
+      color: rgba(31,41,55,.92);
+    }
+
+    .lead strong{ color:#111827; }
+
+    .name{
+      display:inline-block;
+      padding:2px 10px;
+      border-radius:999px;
+      background: rgba(255,77,109,.10);
+      border:1px solid rgba(255,77,109,.18);
+      font-weight:800;
+    }
+
+    .btnArea{
+      position:relative;
+      min-height:70px;
+      margin-top:6px;
+    }
+
+    .buttons{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      align-items:center;
+      position:relative;
+      z-index:2;
+    }
+
+    button{
+      border:0;
+      border-radius:999px;
+      padding:14px 18px;
+      font-weight:800;
+      font-size:18px;
+      cursor:pointer;
+      box-shadow: 0 12px 25px rgba(17,24,39,.14);
+      transition: transform .08s ease, filter .15s ease, box-shadow .2s ease;
+      user-select:none;
+      touch-action: manipulation;
+    }
+
+    button:active{ transform: translateY(1px) scale(.99); }
+
+    #yesBtn{ background: linear-gradient(180deg, #22c55e, #16a34a); color:white; }
+    #yesBtn:hover{ filter:brightness(1.04); box-shadow: 0 14px 32px rgba(22,163,74,.25); }
+
+    /* Das Nein-Button flitzt in einem „Playground“ herum */
+    #noBtn{
+      background: linear-gradient(180deg, #f87171, #ef4444);
+      color:white;
+      position:absolute;
+      left: 230px;
+      top: 8px;
+      will-change: left, top;
+    }
+    #noBtn:hover{ filter:brightness(1.03); box-shadow: 0 14px 32px rgba(239,68,68,.25); }
+
+    .helper{
+      margin-top:12px;
+      font-size:14px;
+      color: var(--muted);
+      opacity:.95;
+    }
+
+    .footer{
+      padding:16px 22px 20px;
+      border-top:1px solid rgba(255,255,255,.55);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      background: rgba(255,255,255,.35);
+    }
+
+    .tiny{
+      font-size:12px;
+      color: rgba(107,114,128,.95);
+    }
+
+    .tiny code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      background: rgba(255,255,255,.65);
+      border:1px solid rgba(0,0,0,.05);
+      padding:2px 6px;
+      border-radius:8px;
+    }
+
+    /* Herzchen im Hintergrund */
+    .hearts{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+    }
+
+    .heart{
+      position:absolute;
+      width:14px;
+      height:14px;
+      background: rgba(255,77,109,.28);
+      transform: rotate(45deg);
+      border-radius:3px;
+      animation: floatUp var(--dur) linear infinite;
+      left: var(--x);
+      bottom: -30px;
+      filter: blur(.15px);
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:14px;
+      height:14px;
+      background: inherit;
+      border-radius:50%;
+    }
+    .heart::before{ left:-7px; top:0; }
+    .heart::after{ top:-7px; left:0; }
+
+    @keyframes floatUp{
+      from{ transform: translateY(0) rotate(45deg) scale(var(--s)); opacity:.9; }
+      to{ transform: translateY(-640px) rotate(45deg) scale(var(--s)); opacity:0; }
+    }
+
+    /* Success Bereich */
+    .success{
+      display:none;
+      margin-top:18px;
+      border-radius:18px;
+      padding:16px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(255,255,255,.7);
+      position:relative;
+      z-index:2;
+      animation: pop .35s ease-out both;
+    }
+
+    @keyframes pop{
+      from{ transform: translateY(6px) scale(.985); opacity:0; }
+      to{ transform: translateY(0) scale(1); opacity:1; }
+    }
+
+    .success h2{
+      margin:0 0 10px;
+      font-size:22px;
+    }
+
+    .success p{
+      margin:0 0 14px;
+      line-height:1.5;
+      color: rgba(31,41,55,.92);
+    }
+
+    .grid{
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1fr;
+    }
+
+    .media{
+      width:100%;
+      border-radius:16px;
+      overflow:hidden;
+      border: 1px solid rgba(0,0,0,.06);
+      background:white;
+    }
+
+    img{ display:block; width:100%; height:auto; }
+
+    .caption{
+      padding:10px 12px;
+      font-size:13px;
+      color: rgba(55,65,81,.9);
+    }
+
+    @media (min-width: 780px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Konfetti */
+    .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:999;
+      display:none;
+    }
+
+    .confetti i{
+      position:absolute;
+      top:-12px;
+      width:10px;
+      height:16px;
+      border-radius:2px;
+      opacity:.95;
+      animation: fall linear forwards;
+      filter: drop-shadow(0 6px 6px rgba(0,0,0,.18));
+    }
+
+    @keyframes fall{
+      to{ transform: translateY(110vh) rotate(520deg); opacity:1; }
+    }
+
+    /* kleine, liebevolle Details */
+    .spark{
+      display:inline-block;
+      transform: translateY(-1px);
+    }
+
+    .softLine{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,77,109,.35), transparent);
+      margin: 18px 0;
+      opacity:.75;
+    }
+  </style>
+</head>
+<body>
+  <div class="confetti" id="confetti"></div>
+
+  <main class="wrap">
+    <section class="card" id="card" aria-label="Valentinstag Frage">
+      <div class="hearts" aria-hidden="true" id="hearts"></div>
+
+      <header class="topbar">
+        <div class="badge"><span class="dot" aria-hidden="true"></span> Kleiner Moment für uns</div>
+        <div class="tiny" id="dateHint"></div>
+      </header>
+
+      <div class="content">
+        <h1>
+          Hey <span class="name" id="herName">Anna</span> <span class="spark">✨</span><br/>
+          willst du mit mir am Valentinstag ausgehen?
+        </h1>
+
+        <p class="lead">
+          Ich hab da was Schönes im Kopf (kein Stress – nur wir, gutes Essen und ein bisschen Romantik).
+          <br/>
+          Sagst du <strong>Ja</strong>?
+        </p>
+
+        <div class="softLine" aria-hidden="true"></div>
+
+        <div class="btnArea" id="playground">
+          <div class="buttons" id="btnArea">
+            <button id="yesBtn" type="button">Ja 😍</button>
+            <button id="noBtn" type="button" aria-label="Nein">Nein 🙈</button>
+          </div>
+        </div>
+
+        <div class="helper" id="helperText">(Du darfst „Nein“ gerne versuchen… aber ich bin schneller 😇)</div>
+
+        <div class="success" id="success" aria-live="polite">
+          <h2>JAAAA! 🥰🎉</h2>
+          <p>
+            Okay… ich grinse gerade wie ein Honigkuchenpferd.
+            Ich freu mich riesig auf dich. 💞
+          </p>
+
+          <div class="grid">
+            <div class="media">
+              <!--
+                Tipp: Lege eine Datei neben diese HTML-Datei (oder ins gleiche GitHub-Repo), z.B. "bild.jpg",
+                und lass hier src="bild.jpg".
+              -->
+              <img id="happyImg" src="bild.jpg" alt="Ein Bild von mir, wie ich mich freue" onerror="this.src='https://images.unsplash.com/photo-1520975869018-44c6f0b9ee66?auto=format&fit=crop&w=1200&q=80'; this.alt='Glückliches Bild';" />
+              <div class="caption">Ich gerade: „Das ist das beste Ja der Welt.“ 😄</div>
+            </div>
+
+            <div class="media">
+              <!-- Meme/GIF: Ersetze die URL durch dein Lieblingsmeme -->
+              <img id="memeImg" src="https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif" alt="Freude Meme" />
+              <div class="caption">Innerlich mache ich gerade einen Siegestanz 🕺</div>
+            </div>
+          </div>
+
+          <div class="softLine" aria-hidden="true"></div>
+
+          <p class="lead" style="margin:0; font-size:16px; color:rgba(31,41,55,.9)">
+            Schreib mir einfach: <strong>„Wann holen wir dich ab?“</strong> oder <strong>„Wohin gehen wir?“</strong> 😌
+          </p>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <div class="tiny">P.S.: Das hier ist von Nils für Anna 💖</div>
+        <div class="tiny">Datei-Name fürs Auto-Starten: <code>index.html</code></div>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const btnArea = document.getElementById('btnArea');
+    const success = document.getElementById('success');
+    const confetti = document.getElementById('confetti');
+    const card = document.getElementById('card');
+    const playground = document.getElementById('playground');
+
+    // Optional: Name über URL setzen, z.B. ?name=Lisa
+    const herName = document.getElementById('herName');
+    const params = new URLSearchParams(location.search);
+    const n = (params.get('name') || '').trim();
+    if(n) herName.textContent = n;
+
+    // Datum oben rechts (wirkt „handgemacht“)
+    const dateHint = document.getElementById('dateHint');
+    const now = new Date();
+    const fmt = new Intl.DateTimeFormat('de-DE', { weekday:'short', day:'2-digit', month:'2-digit' });
+    dateHint.textContent = fmt.format(now);
+
+    // Herzchen im Hintergrund
+    const heartsWrap = document.getElementById('hearts');
+    (function spawnHearts(){
+      const count = 22;
+      for(let i=0;i<count;i++){
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.style.setProperty('--x', Math.floor(Math.random()*100) + '%');
+        h.style.setProperty('--dur', (7 + Math.random()*6).toFixed(2) + 's');
+        h.style.setProperty('--s', (0.65 + Math.random()*1.4).toFixed(2));
+        h.style.animationDelay = (-Math.random()*10).toFixed(2) + 's';
+        heartsWrap.appendChild(h);
+      }
+    })();
+
+    // „Nein“-Button: bewegt sich innerhalb des Cards
+    let lastPos = {x: 0, y: 0};
+
+    function clamp(v, min, max){ return Math.min(max, Math.max(min, v)); }
+
+    function randomPosition(){
+      const btnRect = noBtn.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+
+      const pad = 14;
+      const maxX = Math.max(pad, cardRect.width - btnRect.width - pad);
+      const maxY = Math.max(pad, cardRect.height - btnRect.height - pad);
+
+      // Nicht direkt in die Nähe der letzten Position springen
+      let x, y, tries = 0;
+      do{
+        x = Math.floor(Math.random() * maxX);
+        y = Math.floor(Math.random() * maxY);
+        tries++;
+      } while(tries < 12 && Math.hypot(x-lastPos.x, y-lastPos.y) < 140);
+
+      lastPos = {x, y};
+      return {x, y};
+    }
+
+    function moveNoButton(animated = true){
+      const {x, y} = randomPosition();
+      if(animated){
+        noBtn.animate(
+          [{ transform: 'translateY(0) scale(1)' }, { transform: 'translateY(-2px) scale(1.02)' }, { transform: 'translateY(0) scale(1)' }],
+          { duration: 180, easing: 'ease-out' }
+        );
+      }
+      noBtn.style.left = x + 'px';
+      noBtn.style.top  = y + 'px';
+    }
+
+    // Startposition
+    moveNoButton(false);
+
+    // Auslöser: Wenn man sich nähert (Pointer) oder versucht zu klicken
+    function evade(e){
+      e.preventDefault();
+      moveNoButton(true);
+    }
+
+    // a) klassische Interaktionen
+    ['mouseenter','pointerenter','focus','touchstart','click'].forEach(evt => {
+      noBtn.addEventListener(evt, evade, {passive:false});
+    });
+
+    // b) „Radar“: wenn der Mauszeiger in die Nähe kommt, springt es schon vorher
+    playground.addEventListener('pointermove', (e) => {
+      const b = noBtn.getBoundingClientRect();
+      const dx = (b.left + b.width/2) - e.clientX;
+      const dy = (b.top + b.height/2) - e.clientY;
+      const dist = Math.hypot(dx, dy);
+
+      // Schwelle je nach Gerät etwas großzügiger
+      const threshold = window.matchMedia('(pointer: coarse)').matches ? 110 : 90;
+      if(dist < threshold) moveNoButton(true);
+    });
+
+    // JA-Logik
+    yesBtn.addEventListener('click', () => {
+      btnArea.style.display = 'none';
+      document.getElementById('helperText').textContent = 'Okay… das war gerade sehr süß von dir 🥺';
+      success.style.display = 'block';
+      launchConfetti();
+    });
+
+    // Konfetti
+    function launchConfetti(){
+      confetti.style.display = 'block';
+      confetti.innerHTML = '';
+
+      const pieces = 140;
+      const colors = ['#22c55e','#ef4444','#3b82f6','#a855f7','#f59e0b','#ec4899','#ff4d6d','#ff8fab'];
+
+      for(let i=0;i<pieces;i++){
+        const p = document.createElement('i');
+        const size = 6 + Math.random()*10;
+        p.style.width = size + 'px';
+        p.style.height = (size*1.45) + 'px';
+        p.style.left = Math.random()*100 + 'vw';
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+        p.style.animationDuration = (2.2 + Math.random()*2.6).toFixed(2) + 's';
+        p.style.animationDelay = (Math.random()*0.25).toFixed(2) + 's';
+        p.style.transform = `translateY(0) rotate(${Math.random()*180}deg)`;
+        confetti.appendChild(p);
+        p.addEventListener('animationend', () => p.remove());
+      }
+
+      setTimeout(() => {
+        confetti.style.display = 'none';
+        confetti.innerHTML = '';
+      }, 4700);
+    }
+
+    // Bei Resize „Nein“ neu platzieren
+    window.addEventListener('resize', () => moveNoButton(false));
+
+    // Tastatur-Access: wenn jemand mit Tab auf Nein landet, springt es weg
+    noBtn.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') evade(e);
+    });
+  </script>
+</body>
+</html>
