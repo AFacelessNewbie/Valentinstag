@@ -130,7 +130,7 @@
   </div>
 
   <!-- Das „Nein“ liegt bewusst außerhalb der Card -->
-  <button id="no" aria-label="Nein">Nein 🙈</button>
+  <button id="no" aria-label="Nein" tabindex="-1">Nein 🙈</button>
 
 <script>
   const no = document.getElementById('no');
@@ -151,14 +151,27 @@
 
   // Teleport mit kurzem „Verschwinden“ (fühlt sich flüssiger an)
   let moving = false;
-  function teleportNo(){
+  function teleportNo(forceInstant = false){
     if(moving) return;
     moving = true;
+
+    // optional: noch schneller ohne sichtbares Fade, falls wir einen Klick abfangen
+    if(forceInstant){
+      const {x,y} = randomViewportPos();
+      no.style.opacity = '0.01';
+      no.style.left = x + 'px';
+      no.style.top  = y + 'px';
+      no.style.transform = 'translate(0,0)';
+      requestAnimationFrame(() => {
+        no.style.opacity = '1';
+        moving = false;
+      });
+      return;
+    }
 
     no.style.opacity = '0';
     const {x,y} = randomViewportPos();
 
-    // ganz kurzer Delay, damit das Fade-Out sichtbar ist
     setTimeout(() => {
       no.style.left = x + 'px';
       no.style.top  = y + 'px';
@@ -180,19 +193,42 @@
   let lastMove = 0;
   document.addEventListener('pointermove', (e) => {
     const now = performance.now();
-    if(now - lastMove < 40) return; // leichtes Throttling
+    if(now - lastMove < 30) return; // etwas schneller
 
     const b = no.getBoundingClientRect();
     const cx = b.left + b.width/2;
     const cy = b.top  + b.height/2;
     const dist = Math.hypot(cx - e.clientX, cy - e.clientY);
 
-    const threshold = window.matchMedia('(pointer: coarse)').matches ? 160 : 120;
+    const threshold = window.matchMedia('(pointer: coarse)').matches ? 190 : 140;
     if(dist < threshold){
       lastMove = now;
-      teleportNo();
+      teleportNo(false);
     }
   }, {passive:true});
+
+  // HARTE SICHERUNG: Klick ist unmöglich (fangen pointerdown im Capture ab)
+  function insideNo(x, y, pad){
+    const r = no.getBoundingClientRect();
+    return x >= r.left - pad && x <= r.right + pad && y >= r.top - pad && y <= r.bottom + pad;
+  }
+
+  function blockAttempt(ev){
+    const x = ev.clientX ?? (ev.touches && ev.touches[0] && ev.touches[0].clientX);
+    const y = ev.clientY ?? (ev.touches && ev.touches[0] && ev.touches[0].clientY);
+    if(x == null || y == null) return;
+
+    const pad = window.matchMedia('(pointer: coarse)').matches ? 40 : 28;
+    if(insideNo(x, y, pad)){
+      ev.preventDefault();
+      ev.stopPropagation();
+      teleportNo(true);
+    }
+  }
+
+  document.addEventListener('pointerdown', blockAttempt, {capture:true});
+  document.addEventListener('mousedown', blockAttempt, {capture:true});
+  document.addEventListener('touchstart', blockAttempt, {capture:true, passive:false});
 
   ['mouseenter','pointerenter','touchstart','pointerdown','click','focus'].forEach(evt => {
     no.addEventListener(evt, (ev) => {
